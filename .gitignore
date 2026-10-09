@@ -1,0 +1,154 @@
+# Visual Studio and .NET common ignores
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+out/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NuGet
+*.nupkg
+**/packages/*
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+.nuget/
+
+# Microsoft Azure publish related
+*.[Pp]ublish.xml
+.publishsettings
+
+# Dotnet publish
+publish/
+
+# Rider and ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userprefs
+
+# MonoDevelop
+*.userprefs
+
+# Cache files
+*.cache
+*.ilk
+*.meta
+*.obj
+*.pdb
+*.iobj
+*.ipdb
+
+# Test results
+TestResults/
+*.trx
+*.VisualState.xml
+*.coverage
+*.coveragexml
+
+# CI/CD
+.vsconfig
+
+# npm / Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Bower
+bower_components/
+
+# Logs
+*.log
+logs/
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Rider
+.idea/
+
+# Azure Functions local settings
+local.settings.json
+
+# User secrets
+secrets.json
+
+# Publish artifacts
+*.Publish.xml
+
+# Visual Studio publish folder
+*/bin/Release/net*/publish/
+
+# Linux / macOS
+.DS_Store
+Thumbs.db
+
+# Coverage and profiling
+coverage/
+*.lcov
+*.coverage
+*.coveragexml
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code workspace history
+.history/
+
+# Docker
+docker-compose.*.yml
+**/docker-compose.override.yml
+Dockerfile*
+.docker/
+
+# Azure DevOps
+*.code-workspace
+
+# Temporary files
+~$*
+*.tmp
+*.temp
+
+# Certificates and keys
+*.pfx
+*.key
+
+# EF Core Migrations generated files - generally keep migrations but ignore snapshot artifacts if any
+**/Migrations/*.Designer.cs
+
+# Blazor / static content built by tooling
+wwwroot/lib/
+wwwroot/_content/
+
+# Rider caches
+.idea/
+
+# Rider plugin
+.idea/*
+
+# Visual Studio cache for Razor language services
+*.njsproj.user
+
+# End of file
