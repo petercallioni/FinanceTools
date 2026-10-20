@@ -1,0 +1,148 @@
+﻿
+@page "/shares-buy"
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<PageTitle>Buy Events</PageTitle>
+
+<h1>Share Buy Events</h1>
+<p>Add a new buy event.</p>
+
+<h2>Add a share holding</h2>
+<EditForm Model="Input" OnValidSubmit="AddBuyEvent">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" role="alert" />
+    @if (saveMessage is not null)
+    {
+        <p role="status">@saveMessage</p>
+    }
+    <div class="row g-3">
+        <div class="col-md-2">
+            <label for="symbol" class="form-label">Symbol</label>
+            <InputText id="symbol" @bind-Value="Input.Symbol" @bind-Value:after="OnTickerChanged" class="form-control" placeholder="CBA" />
+            <ValidationMessage For="() => Input.Symbol" class="text-danger" />
+        </div>
+        <div class="col-md-2">
+            <label for="companyName" class="form-label">Company name</label>
+            <InputText id="companyName" @bind-Value="Input.CompanyName" class="form-control" placeholder="Commonwealth Bank of Australia" />
+            <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
+        </div>
+        <div class="col-md-1">
+            <label for="quantity" class="form-label">Quantity</label>
+            <InputNumber id="quantity" @bind-Value="Input.Quantity" @bind-Value:after="UpdateBrokerageFee" class="form-control" step="1" />
+            <ValidationMessage For="() => Input.Quantity" class="text-danger" />
+        </div>
+        <div class="col-md-1">
+            <label for="purchasePrice" class="form-label">Average purchase price</label>
+            <InputNumber id="purchasePrice" @bind-Value="Input.AveragePurchasePrice" @bind-Value:after="UpdateBrokerageFee" class="form-control" step="0.01" />
+            <ValidationMessage For="() => Input.AveragePurchasePrice" class="text-danger" />
+        </div>
+        <div class="col-md-1">
+            <label for="contractDate" class="form-label">Contract Date</label>
+            <InputDate id="contractDate" @bind-Value="Input.ContractDate" class="form-control" />
+            <ValidationMessage For="() => Input.ContractDate" class="text-danger" />
+        </div>
+        <div class="col-md-2">
+            <label for="broker" class="form-label">Broker</label>
+            <div class="d-flex align-items-center gap-2">
+                <InputSelect id="broker" @bind-Value="Input.BrokerName" @bind-Value:after="OnBrokerChanged" class="form-select">
+                    <option value="">Select broker</option>
+                    @foreach (var broker in brokers)
+                    {
+                        <option value="@broker.Name">@broker.Name</option>
+                    }
+                </InputSelect>
+                @if (SelectedBroker is not null)
+                {
+                    <img src="/images/brokers/@SelectedBroker.LogoFileName" alt="@SelectedBroker.Name" style="max-height: 40px; max-width: 80px; object-fit: contain;" />
+                }
+            </div>
+            <ValidationMessage For="() => Input.BrokerName" class="text-danger" />
+            <div class="form-check mt-2">
+                <InputCheckbox id="BrokerDefaultFee" @bind-Value="Input.BrokerDefaultFee" @bind-Value:after="UpdateBrokerageFee" class="form-check-input" />
+                <label for="BrokerDefaultFee" class="form-check-label">Use broker default fee</label>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <label for="brokeragePrice" class="form-label">Brokerage Fee</label>
+            <InputNumber id="brokeragePrice" @bind-Value="Input.BrokerageFee" class="form-control" step="0.01" disabled="@Input.BrokerDefaultFee" />
+            <ValidationMessage For="() => Input.BrokerageFee" class="text-danger" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Save event</button>
+</EditForm>
+
+<h2 class="mt-4">Saved event</h2>
+@if (events.Count == 0)
+{
+    <p>No events yet.</p>
+}
+else
+{
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <label for="tickerFilter" class="form-label">Company ticker</label>
+            <InputText id="tickerFilter" @bind-Value="tickerFilter" @bind-Value:after="ResetPagination" class="form-control" placeholder="Filter ticker" />
+        </div>
+        <div class="col-md-3">
+            <label for="financialYearFilter" class="form-label">Financial year</label>
+            <InputSelect id="financialYearFilter" TValue="int?" @bind-Value="selectedFinancialYearEndYear" @bind-Value:after="ResetPagination" class="form-select">
+                <option value="">All financial years</option>
+                @foreach (var financialYear in FinancialYearEndYears)
+                {
+                    <option value="@financialYear">@($"FY {financialYear - 1}-{financialYear % 100:00}")</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <div class="form-check mb-2">
+                <InputCheckbox id="hideFullySold" @bind-Value="hideFullySold" @bind-Value:after="ResetPagination" class="form-check-input" />
+                <label for="hideFullySold" class="form-check-label">Hide fully sold</label>
+            </div>
+        </div>
+    </div>
+    @if (FilteredEventCount == 0)
+    {
+        <p>No events match the selected filters.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Company</th>
+                    <th>Broker</th>
+                    <th>Quantity</th>
+                    <th>Average purchase price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var buyEvent in CurrentPageEvents)
+                {
+                    <tr class="@(buyEvent.SellAllocations.Sum(allocation => allocation.Quantity) >= buyEvent.Quantity ? "buy-table-row-fully-sold" : "")">
+                        <td>@buyEvent.Symbol</td>
+                        <td>@buyEvent.CompanyName</td>
+                        <td>@buyEvent.Broker.Name</td>
+                        <td>@buyEvent.Quantity.ToString("0.######")</td>
+                        <td>@buyEvent.AveragePurchasePrice.ToString("C")</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => DeleteBuyEvent(buyEvent)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <span>Showing @(currentPage * PageSize + 1)–@Math.Min((currentPage + 1) * PageSize, FilteredEventCount) of @FilteredEventCount</span>
+            <div class="btn-group" role="group" aria-label="Saved event pages">
+                <button type="button" class="btn btn-outline-secondary" @onclick="PreviousPage" disabled="@(currentPage == 0)">Previous</button>
+                <button type="button" class="btn btn-outline-secondary" @onclick="NextPage" disabled="@((currentPage + 1) * PageSize >= FilteredEventCount)">Next</button>
+            </div>
+        </div>
+    }
+}

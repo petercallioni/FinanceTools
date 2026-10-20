@@ -84,6 +84,8 @@ logs/
 *.ldf
 *.sqlite
 *.db
+*.db-shm
+*.db-wal
 
 # Rider
 .idea/
@@ -135,9 +137,6 @@ Dockerfile*
 *.pfx
 *.key
 
-# EF Core Migrations generated files - generally keep migrations but ignore snapshot artifacts if any
-**/Migrations/*.Designer.cs
-
 # Blazor / static content built by tooling
 wwwroot/lib/
 wwwroot/_content/
@@ -152,3 +151,4 @@ wwwroot/_content/
 *.njsproj.user
 
 # End of file
+.localpilot/

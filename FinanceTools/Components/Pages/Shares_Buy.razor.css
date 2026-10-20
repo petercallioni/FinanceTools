@@ -1,0 +1,10 @@
+/* CSS for Shares_Buy component */
+
+.buy-table-row-fully-sold
+{
+    font-style:italic;
+}
+
+.buy-table-row-fully-sold > td {
+    color:darkgrey;
+}
