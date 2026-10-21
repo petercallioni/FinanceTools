@@ -118,7 +118,7 @@ else
                         <td>@sellEvent.CompanyName</td>
                         <td>@sellEvent.Broker.Name</td>
                         <td>@sellEvent.Quantity.ToString("0.######")</td>
-                        <td>@sellEvent.AverageSalePrice.ToString("C")</td>
+                        <td>@sellEvent.AverageSalePrice.ToString("C4")</td>
                         <td>
                             <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => DeleteSellEvent(sellEvent)">Delete</button>
                         </td>
@@ -148,7 +148,7 @@ else
                     <tr>
                         <th class=""></th>
                         <th class="">Aquired</th>
-                        <th class="">Buy Price</th>
+                        <th class="">Buy ⇒ Sold (Inc. Brokerage)</th>
                         <th class="">Units Available</th>
                         <th class="">Quantity Sold</th>
                     </tr>
@@ -162,7 +162,9 @@ else
                             <InputCheckbox @bind-Value="choice.Selected" />
                         </td>
                         <td>@choice.ContractDate.ToShortDateString()</td>
-                        <td>@choice.PurchasePrice.ToString("C")</td>
+                        <td>
+                                @choice.PurchasePrice.ToString("C4") ⇒ <span class="@( choice.PercentageDifference >= 0 ? "gain" : "loss" )">@(Input.AverageCostPerUnitIncBrokerage.ToString("C4")) (@choice.PercentageDifference.ToString("F2")%)</span>
+                        </td>
                         <td>@choice.RemainingQuantity.ToString("0.######") available</td>
                         <td>
                             <InputNumber @bind-Value="choice.Quantity"

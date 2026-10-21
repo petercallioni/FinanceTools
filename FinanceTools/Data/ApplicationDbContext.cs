@@ -15,6 +15,10 @@ namespace FinanceTools.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Broker>()
+                .HasIndex(broker => broker.Name)
+                .IsUnique();
+
             modelBuilder.Entity<EventSellAllocation>()
                 .HasKey(a => new { a.EventBuyId, a.EventSellId });
 

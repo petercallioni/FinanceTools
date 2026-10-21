@@ -92,6 +92,7 @@ namespace FinanceTools.Components.Pages
             List<EventBuy> buyEvents = await DbContext.BuyEvents
                 .AsNoTracking()
                 .Include(buy => buy.SellAllocations)
+                    .ThenInclude(sell_allocation => sell_allocation.EventSell)
                 .Where(buy => buy.UserId == user.Id && buy.Symbol == symbol)
                 .ToListAsync();
 
@@ -102,6 +103,7 @@ namespace FinanceTools.Components.Pages
             {
                 broker = new Broker { Name = Input.BrokerName };
                 DbContext.Brokers.Add(broker);
+                await DbContext.SaveChangesAsync();
             }
             allocationBroker = broker;
 
@@ -110,9 +112,16 @@ namespace FinanceTools.Components.Pages
                 {
                     BuyEventId = buy.Id,
                     ContractDate = buy.ContractDate,
-                    PurchasePrice = buy.AveragePurchasePrice,
+                    PurchasePrice = buy.AverageCostPerUnitIncBrokerage,
                     RemainingQuantity = buy.Quantity - buy.SellAllocations.Sum(a => a.Quantity),
-                    Quantity = buy.Quantity - buy.SellAllocations.Sum(a => a.Quantity)
+                    PercentageDifference =
+                        (Input.AverageCostPerUnitIncBrokerage - buy.AverageCostPerUnitIncBrokerage)
+                        / buy.AverageCostPerUnitIncBrokerage
+                        * 100,
+                    Quantity
+                    = buy.Quantity - buy.SellAllocations.Sum(a => a.Quantity) > Input.Quantity
+                    ? Input.Quantity
+                    : buy.Quantity - buy.SellAllocations.Sum(a => a.Quantity), // Default to the remaining quantity or the sale quantity, whichever is smaller
                 })
                 .Where(choice => choice.RemainingQuantity > 0)
                 .ToList();
@@ -227,6 +236,9 @@ namespace FinanceTools.Components.Pages
 
             [Display(Name = "Contract date")]
             public DateTime ContractDate { get; set; } = DateTime.Today;
+
+            public decimal TotalCapital => (AverageSalePrice * Quantity) + BrokerageFee;
+            public decimal AverageCostPerUnitIncBrokerage => Quantity != 0 ? TotalCapital / Quantity : 0;
         }
 
         private sealed class BuyAllocationChoice
@@ -237,6 +249,7 @@ namespace FinanceTools.Components.Pages
             public decimal RemainingQuantity { get; set; }
             public bool Selected { get; set; }
             public decimal Quantity { get; set; }
+            public decimal PercentageDifference { get; set; }
         }
         private async Task ConfirmSellAllocations()
         {

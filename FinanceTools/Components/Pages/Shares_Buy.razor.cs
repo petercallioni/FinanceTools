@@ -121,7 +121,7 @@ namespace FinanceTools.Components.Pages
                 .Include(buyEvent => buyEvent.SellAllocations)
                 .Where(buyEvent => buyEvent.UserId == user.Id)
                 .OrderBy(buyEvent => buyEvent.Symbol)
-                .ThenBy(buyEvent => buyEvent.ContractDate)
+                    .ThenBy(buyEvent => buyEvent.ContractDate)
                 .ToListAsync();
             currentPage = 0;
         }

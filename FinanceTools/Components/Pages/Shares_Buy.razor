@@ -129,7 +129,7 @@ else
                         <td>@buyEvent.CompanyName</td>
                         <td>@buyEvent.Broker.Name</td>
                         <td>@buyEvent.Quantity.ToString("0.######")</td>
-                        <td>@buyEvent.AveragePurchasePrice.ToString("C")</td>
+                        <td>@buyEvent.AveragePurchasePrice.ToString("C4")</td>
                         <td>
                             <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => DeleteBuyEvent(buyEvent)">Delete</button>
                         </td>
