@@ -19,33 +19,33 @@
     {
         <p role="status">@saveMessage</p>
     }
-    <div class="row g-3">
-        <div class="col-md-2">
+    <div class="trade-event-grid">
+        <div class="trade-event-field">
             <label for="symbol" class="form-label">Symbol</label>
             <InputText id="symbol" @bind-Value="Input.Symbol" @bind-Value:after="OnTickerChanged" class="form-control" placeholder="CBA" />
             <ValidationMessage For="() => Input.Symbol" class="text-danger" />
         </div>
-        <div class="col-md-2">
+        <div class="trade-event-field">
             <label for="companyName" class="form-label">Company name</label>
             <InputText id="companyName" @bind-Value="Input.CompanyName" class="form-control" placeholder="Commonwealth Bank of Australia" />
             <ValidationMessage For="() => Input.CompanyName" class="text-danger" />
         </div>
-        <div class="col-md-1">
+        <div class="trade-event-field">
             <label for="quantity" class="form-label">Quantity</label>
             <InputNumber id="quantity" @bind-Value="Input.Quantity" @bind-Value:after="UpdateBrokerageFee" class="form-control" step="1" />
             <ValidationMessage For="() => Input.Quantity" class="text-danger" />
         </div>
-        <div class="col-md-1">
+        <div class="trade-event-field">
             <label for="purchasePrice" class="form-label">Average purchase price</label>
             <InputNumber id="purchasePrice" @bind-Value="Input.AveragePurchasePrice" @bind-Value:after="UpdateBrokerageFee" class="form-control" step="0.01" />
             <ValidationMessage For="() => Input.AveragePurchasePrice" class="text-danger" />
         </div>
-        <div class="col-md-1">
+        <div class="trade-event-field">
             <label for="contractDate" class="form-label">Contract Date</label>
             <InputDate id="contractDate" @bind-Value="Input.ContractDate" class="form-control" />
             <ValidationMessage For="() => Input.ContractDate" class="text-danger" />
         </div>
-        <div class="col-md-2">
+        <div class="trade-event-field">
             <label for="broker" class="form-label">Broker</label>
             <div class="d-flex align-items-center gap-2">
                 <InputSelect id="broker" @bind-Value="Input.BrokerName" @bind-Value:after="OnBrokerChanged" class="form-select">
@@ -66,7 +66,7 @@
                 <label for="BrokerDefaultFee" class="form-check-label">Use broker default fee</label>
             </div>
         </div>
-        <div class="col-md-1">
+        <div class="trade-event-field">
             <label for="brokeragePrice" class="form-label">Brokerage Fee</label>
             <InputNumber id="brokeragePrice" @bind-Value="Input.BrokerageFee" class="form-control" step="0.01" disabled="@Input.BrokerDefaultFee" />
             <ValidationMessage For="() => Input.BrokerageFee" class="text-danger" />
@@ -129,7 +129,7 @@ else
                         <td>@buyEvent.CompanyName</td>
                         <td>@buyEvent.Broker.Name</td>
                         <td>@buyEvent.Quantity.ToString("0.######")</td>
-                        <td>@buyEvent.AveragePurchasePrice.ToString("C4")</td>
+                        <td>@buyEvent.AverageCostPerUnitIncBrokerage.ToString("C4")</td>
                         <td>
                             <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => DeleteBuyEvent(buyEvent)">Delete</button>
                         </td>

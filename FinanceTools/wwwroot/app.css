@@ -20,6 +20,26 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+.trade-event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+}
+
+.trade-event-field {
+    min-width: 0;
+}
+
+.trade-event-field .form-control,
+.trade-event-field .form-select {
+    width: 100%;
+    min-width: 0;
+}
+
+.trade-event-field .d-flex > .form-select {
+    flex: 1;
+}
+
 h1:focus {
     outline: none;
 }
@@ -57,4 +77,9 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+
+html[data-bs-theme="dark"] .top-row {
+    background-color: rgba(0,0,0,0.4);
+    border-color: #495057;
 }
